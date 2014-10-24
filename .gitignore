@@ -1,0 +1,5 @@
+ray.opensdf
+ray.sdf
+*.sdf
+Debug/*
+ray.v12.suo
