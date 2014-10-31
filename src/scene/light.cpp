@@ -70,14 +70,13 @@ vec3f AmbientLight::getColor(const vec3f& P) const
 
 vec3f AmbientLight::getDirection(const vec3f& P) const
 {
-	//Ambient light illuminates surrounding, assume 0 here
+	// ambient light illuminates surrounding, return 0
 	return vec3f(0.0,0.0,0.0);
 }
 
 
 vec3f AmbientLight::shadowAttenuation(const vec3f& P) const
 {
-	// YOUR CODE HERE:
-	// You should implement shadow-handling code here.
+	// ambient light illuminates surrounding, return 1
 	return vec3f(1, 1, 1);
 }
