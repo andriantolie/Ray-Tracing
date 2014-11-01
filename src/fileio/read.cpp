@@ -538,7 +538,7 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 			throw ParseError("No info for ambient_light");
 		}
 
-		scene->add(new AmbientLight(scene,
+		scene->add_ambient(new AmbientLight(scene,
 			tupleToVec(getColorField(child))));
 	} else if( 	name == "sphere" ||
 				name == "box" ||

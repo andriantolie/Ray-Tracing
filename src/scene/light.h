@@ -11,7 +11,6 @@ public:
 	virtual double distanceAttenuation( const vec3f& P ) const = 0;
 	virtual vec3f getColor( const vec3f& P ) const = 0;
 	virtual vec3f getDirection( const vec3f& P ) const = 0;
-
 protected:
 	Light( Scene *scene, const vec3f& col )
 		: SceneElement( scene ), color( col ) {}
