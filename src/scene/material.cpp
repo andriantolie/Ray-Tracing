@@ -44,13 +44,15 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 		vec3f normal = i.N;
 		// distance attenuation
 		double distanceAttenuation = (*light_iterator)->distanceAttenuation(isectCoord);
+		// shadow attenuation
+		vec3f shadowAttenuation = (*light_iterator)->shadowAttenuation(isectCoord);
 
 		// diffuse reflection angle
 		double diffuseReflectionAngle = normal.dot(direction);
 		//add difuse light
-		result[0] += intensity[0] * kd[0] * diffuseReflectionAngle * distanceAttenuation;
-		result[1] += intensity[1] * kd[1] * diffuseReflectionAngle * distanceAttenuation;
-		result[2] += intensity[2] * kd[2] * diffuseReflectionAngle * distanceAttenuation;
+		result[0] += intensity[0] * kd[0] * diffuseReflectionAngle * shadowAttenuation[0] * distanceAttenuation;
+		result[1] += intensity[1] * kd[1] * diffuseReflectionAngle * shadowAttenuation[1] * distanceAttenuation;
+		result[2] += intensity[2] * kd[2] * diffuseReflectionAngle * shadowAttenuation[2] * distanceAttenuation;
 
 		// specular reflection angle
 		// based on equation 16.17 R.V = (2N(N.L) - L).V
@@ -58,9 +60,9 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 		if (specularReflectionAngle < 0.0) specularReflectionAngle = 0.0;
 		double specularReflectionAnglePowered = pow(specularReflectionAngle, shininess * 128);
 		// add specular reflection
-		result[0] += intensity[0] * ks[0] * specularReflectionAnglePowered * distanceAttenuation;
-		result[1] += intensity[1] * ks[1] * specularReflectionAnglePowered * distanceAttenuation;
-		result[2] += intensity[2] * ks[2] * specularReflectionAnglePowered * distanceAttenuation;
+		result[0] += intensity[0] * ks[0] * specularReflectionAnglePowered * shadowAttenuation[0] * distanceAttenuation;
+		result[1] += intensity[1] * ks[1] * specularReflectionAnglePowered * shadowAttenuation[1] * distanceAttenuation;
+		result[2] += intensity[2] * ks[2] * specularReflectionAnglePowered * shadowAttenuation[2] * distanceAttenuation;
 	
 	}
 	return result;
