@@ -2,6 +2,8 @@
 #define __LIGHT_H__
 
 #include "scene.h"
+#include "../ui/TraceUI.h"
+extern TraceUI* traceUI;
 
 class Light
 	: public SceneElement
@@ -39,17 +41,17 @@ class PointLight
 public:
 	PointLight( Scene *scene, const vec3f& pos, const vec3f& color )
 		: Light( scene, color ), position( pos ) {
-		constantAttenuationCoeff = 0.0;
-		linearAttenuationCoeff = 0.0;
-		quadraticAttenuationCoeff = 0.0;
+		constantAttenuationCoeff = traceUI->getConstantAttenuationCoeff();
+		linearAttenuationCoeff = traceUI->getLinearAttenuationCoeff();
+		quadraticAttenuationCoeff = traceUI->getQuadraticAttenuationCoeff();
 	}
 	virtual vec3f shadowAttenuation(const vec3f& P) const;
 	virtual double distanceAttenuation( const vec3f& P ) const;
 	virtual vec3f getColor( const vec3f& P ) const;
 	virtual vec3f getDirection( const vec3f& P ) const;
-	void setConstantAttenuationCoeff(const double coeff){ constantAttenuationCoeff = coeff;}
-	void setLinearAttenuationCoeff(const double coeff){linearAttenuationCoeff = coeff;}
-	void setQuadraticAttenuationCoeff(const double coeff){ quadraticAttenuationCoeff = coeff; }
+	void setConstantAttenuationCoeff(const double coeff){ constantAttenuationCoeff = coeff * traceUI->getConstantAttenuationCoeff(); }
+	void setLinearAttenuationCoeff(const double coeff){ linearAttenuationCoeff = coeff * traceUI->getLinearAttenuationCoeff(); }
+	void setQuadraticAttenuationCoeff(const double coeff){ quadraticAttenuationCoeff = coeff * traceUI->getQuadraticAttenuationCoeff(); }
 	double getConstantAttenuationCoeff() { return constantAttenuationCoeff; }
 	double getLinearAttenuationCoeff() { return linearAttenuationCoeff; }
 	double getQuadraticAttenuationCoeff() { return quadraticAttenuationCoeff; }
