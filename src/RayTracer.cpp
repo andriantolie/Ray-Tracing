@@ -57,6 +57,34 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		intensity[1] = m.kr[1] * reflectionIntensity[1];
 		intensity[2] = m.kr[2] * reflectionIntensity[2];
 
+
+		// check if the object is transparent
+		if (m.index != 1.0){
+			// dot product between ray and normal is positive when a ray is entering object
+			bool enteringObject = (normal.dot((-1)*rayDirection)) >= 0.0;
+			double n_i; // incoming refraction index
+			double n_t; // outgoing refraction index
+			// add refraction ray into account
+			if (enteringObject){
+				n_i = 1.000293; // air refractive index
+				n_t = m.index;
+			}
+			else{
+				n_i = m.index;
+				n_t = 1.000293; // air refractive index
+			}
+			// total internal refraction
+			// TODO
+			//bool tir = ;
+			//if (!tir){
+			//	vec3f refractedDirection = ;
+			//	ray refractionRay = ray(r.at(i.t), refractedDirection);
+			//	vec3f refractionIntensity = traceRay(scene, refractionRay, thresh, depth + 1);
+			//	intensity[0] = m.kt[0] * refractionIntensity[0];
+			//	intensity[1] = m.kt[1] * refractionIntensity[1];
+			//	intensity[2] = m.kt[2] * refractionIntensity[2];
+			//}
+		}
 		return intensity;
 	
 	} else {
