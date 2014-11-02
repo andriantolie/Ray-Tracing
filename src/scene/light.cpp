@@ -19,7 +19,15 @@ vec3f DirectionalLight::shadowAttenuation( const vec3f& P ) const
 	isect i;
 	bool intersectOtherObject = scene->intersect(shadowRay, i);
 	if (intersectOtherObject) {
-		return vec3f(0, 0, 0);
+		//handles transparency
+		vec3f transparencyIndex = i.getMaterial().kt;
+		if (transparencyIndex == vec3f(0.0, 0.0, 0.0)){
+			return vec3f(0, 0, 0);
+		}
+		else{
+			return transparencyIndex;
+		}
+	
 	}
 	else{
 		return vec3f(1, 1, 1);
@@ -73,7 +81,15 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
 	isect i;
 	bool intersectOtherObject = scene->intersect(shadowRay, i);
 	if (intersectOtherObject) {
-		return vec3f(0, 0, 0);
+		//handles transparency
+		vec3f transparencyIndex = i.getMaterial().kt;
+		if (transparencyIndex == vec3f(0.0, 0.0, 0.0)){
+			return vec3f(0, 0, 0);
+		}
+		else{
+			return transparencyIndex;
+		}
+
 	}
 	else{
 		return vec3f(1, 1, 1);
