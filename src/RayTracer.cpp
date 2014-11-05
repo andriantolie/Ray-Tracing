@@ -53,9 +53,9 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		ray reflectionRay = ray(r.at(i.t), reflectedDirection);
 		// add reflection ray into account
 		vec3f reflectionIntensity = traceRay(scene, reflectionRay, thresh, depth + 1);
-		intensity[0] = m.kr[0] * reflectionIntensity[0];
-		intensity[1] = m.kr[1] * reflectionIntensity[1];
-		intensity[2] = m.kr[2] * reflectionIntensity[2];
+		intensity[0] += m.kr[0] * reflectionIntensity[0];
+		intensity[1] += m.kr[1] * reflectionIntensity[1];
+		intensity[2] += m.kr[2] * reflectionIntensity[2];
 
 		return intensity;
 	
