@@ -21,6 +21,9 @@ public:
 		localbounds.min = vec3f(-0.5, -0.5, -0.5);
         return localbounds;
     }
+protected:
+	vec3f max = ComputeLocalBoundingBox().max;
+	vec3f min = ComputeLocalBoundingBox().min;
 };
 
 #endif // __BOX_H__
