@@ -25,6 +25,10 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 vec3f RayTracer::traceRay( Scene *scene, const ray& r, 
 	const vec3f& thresh, int depth )
 {
+	// terminate after certain depth
+	if (depth > traceUI->getDepth()){
+		return vec3f(0.0, 0.0, 0.0);
+	}
 
 	isect i;
 
@@ -45,17 +49,54 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		vec3f normal = i.N;
 		vec3f rayDirection = r.getDirection();
 
+
 		// add shadow ray into account
 		intensity += m.shade(scene, r, i);
 
 		// reflection is computed using (2*(N.(-d))*N) - (-d)
 		vec3f reflectedDirection = (2 * normal * normal.dot((-1)*rayDirection)) - (-1)*rayDirection;
-		ray reflectionRay = ray(r.at(i.t), reflectedDirection);
+		ray reflectionRay = ray(r.at(i.t), reflectedDirection.normalize());
 		// add reflection ray into account
 		vec3f reflectionIntensity = traceRay(scene, reflectionRay, thresh, depth + 1);
 		intensity[0] += m.kr[0] * reflectionIntensity[0];
 		intensity[1] += m.kr[1] * reflectionIntensity[1];
 		intensity[2] += m.kr[2] * reflectionIntensity[2];
+
+		// check if the object is transparent
+		if (m.kt != vec3f(0.0,0.0,0.0)){
+			// dot product between ray and normal is positive when a ray is entering object
+			bool enteringObject = (normal.dot((-1)*rayDirection)) >= 0.0;
+			double n_i; // incoming refraction index
+			double n_t; // outgoing refraction index
+			// add refraction ray into account
+			if (enteringObject){
+				n_i = 1.000293; // air refractive index
+				n_t = m.index;
+			}
+			else{
+				n_i = m.index;
+				n_t = 1.000293; // air refractive index
+			}
+			// total internal refraction
+			bool tir = false;
+			if (n_t < n_i){
+				double criticalAngle = acos(n_t / n_i);
+				double lightAngle = ((-1)*normal).dot((-1)*rayDirection);
+				if (lightAngle >= criticalAngle) tir = true;
+			}
+			if (!tir){
+				double n_r = n_i / n_t;
+				double normalDotIncomingLight = ((-1)*normal).dot((-1)*rayDirection);
+				// use formula 16.33
+				vec3f refractedDirection = (n_r*normalDotIncomingLight - sqrt(1 - n_r*n_r*(1 - normalDotIncomingLight*normalDotIncomingLight)))*(-1)*normal - n_r*(-1)*rayDirection;
+			    ray refractionRay = ray(r.at(i.t), refractedDirection.normalize);
+			    vec3f refractionIntensity = traceRay(scene, refractionRay, thresh, depth + 1);
+			    intensity[0] += m.kt[0] * refractionIntensity[0];
+			    intensity[1] += m.kt[1] * refractionIntensity[1];
+			    intensity[2] += m.kt[2] * refractionIntensity[2];
+			}
+		}
+
 
 		return intensity;
 	
