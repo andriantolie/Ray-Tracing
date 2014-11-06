@@ -1,4 +1,6 @@
 // The main ray tracer.
+//Author:	LIE, Andrianto (alie@connect.ust.hk) - 20020408
+//			ZENG, Xiong (zxengac@connect.ust.hk) - 20025056
 
 #include <Fl/fl_ask.h>
 
@@ -68,7 +70,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			bool enteringObject = (normal.dot((-1)*rayDirection)) >= 0.0;
 			double n_i; // incoming refraction index
 			double n_t; // outgoing refraction index
-			// add refraction ray into account
+			
 			if (enteringObject){
 				n_i = 1.000293; // air refractive index
 				n_t = m.index;
@@ -76,19 +78,19 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			else{
 				n_i = m.index;
 				n_t = 1.000293; // air refractive index
+				normal = (-1)* normal; // reverse the normal if it is going out from the object
 			}
-			// total internal refraction
+			// check total internal refraction
 			bool tir = false;
-			if (n_t < n_i){
-				double criticalAngle = acos(n_t / n_i);
-				double lightAngle = ((-1)*normal).dot((-1)*rayDirection);
-				if (lightAngle >= criticalAngle) tir = true;
-			}
+			double n_r = n_i / n_t;
+			double normalDotIncomingLight = normal.dot((-1)*rayDirection);
+			double innerSquareRoot = 1 - n_r*n_r*(1 - normalDotIncomingLight*normalDotIncomingLight);
+			if (innerSquareRoot <= 0.0) tir = true;
+
+			// add refraction ray into account
 			if (!tir){
-				double n_r = n_i / n_t;
-				double normalDotIncomingLight = ((-1)*normal).dot((-1)*rayDirection);
 				// use formula 16.33
-				vec3f refractedDirection = (n_r*normalDotIncomingLight - sqrt(1 - n_r*n_r*(1 - normalDotIncomingLight*normalDotIncomingLight)))*(-1)*normal - n_r*(-1)*rayDirection;
+				vec3f refractedDirection = (n_r*normalDotIncomingLight - sqrt(1 - n_r*n_r*(1 - normalDotIncomingLight*normalDotIncomingLight)))*normal - n_r*(-1)*rayDirection;
 			    ray refractionRay = ray(r.at(i.t), refractedDirection.normalize());
 			    vec3f refractionIntensity = traceRay(scene, refractionRay, thresh, depth + 1);
 			    intensity[0] += m.kt[0] * refractionIntensity[0];
