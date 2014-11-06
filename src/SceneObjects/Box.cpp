@@ -10,7 +10,7 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 	// it currently ignores all boxes and just returns false.
 	vec3f p = r.getPosition();
 	vec3f d = r.getDirection();
-
+	int isectSurface;
 
 	double tMin = -1.0e100;
 	double tMax = 1.0e100;
@@ -35,8 +35,10 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 				t1 = t2;
 				t2 = ttemp;
 			}
-			if (t1 > tMin)
+			if (t1 > tMin) {
 				tMin = t1;
+				isectSurface = currentaxis;
+			}
 			if (t2 < tMax)
 				tMax = t2;
 
@@ -51,7 +53,23 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 
 	i.obj = this;
 	i.t = tMin;
-	i.N = r.at(tMin).normalize();
-
+	if (isectSurface == 0) {
+		if (d[isectSurface] < 0)
+			i.N = vec3f(1.0, 0.0, 0.0);
+		else
+			i.N = vec3f(-1.0, 0.0, 0.0);
+	}
+	else if (isectSurface == 1) {
+		if (d[isectSurface] < 0)
+			i.N = vec3f(0.0, 1.0, 0.0);
+		else
+			i.N = vec3f(0.0, -1.0, 0.0);
+	}
+	else {
+		if (d[isectSurface] < 0)
+			i.N = vec3f(0.0, 0.0, 1.0);
+		else
+			i.N = vec3f(0.0, 0.0, -1.0);
+	}
 	return true;
 }

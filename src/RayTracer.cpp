@@ -89,7 +89,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				double normalDotIncomingLight = ((-1)*normal).dot((-1)*rayDirection);
 				// use formula 16.33
 				vec3f refractedDirection = (n_r*normalDotIncomingLight - sqrt(1 - n_r*n_r*(1 - normalDotIncomingLight*normalDotIncomingLight)))*(-1)*normal - n_r*(-1)*rayDirection;
-			    ray refractionRay = ray(r.at(i.t), refractedDirection.normalize);
+			    ray refractionRay = ray(r.at(i.t), refractedDirection.normalize());
 			    vec3f refractionIntensity = traceRay(scene, refractionRay, thresh, depth + 1);
 			    intensity[0] += m.kt[0] * refractionIntensity[0];
 			    intensity[1] += m.kt[1] * refractionIntensity[1];
