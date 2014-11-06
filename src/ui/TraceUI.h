@@ -47,6 +47,10 @@ public:
 	double		getConstantAttenuationCoeff();
 	double		getLinearAttenuationCoeff();
 	double		getQuadraticAttenuationCoeff();
+	
+	void		setConstantAttenuationCoeff(double coeff);
+	void		setLinearAttenuationCoeff(double coeff);
+	void		setQuadraticAttenuationCoeff(double coeff);
 
 private:
 	RayTracer*	raytracer;

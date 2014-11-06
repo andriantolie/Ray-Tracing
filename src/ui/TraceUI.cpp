@@ -224,6 +224,18 @@ double TraceUI::getQuadraticAttenuationCoeff()
 {
 	return m_nQuadraticAttenuationCoeff;
 }
+
+void TraceUI::setConstantAttenuationCoeff(double coeff){
+	m_nConstantAttenuationCoeff = coeff;
+}
+
+void TraceUI::setLinearAttenuationCoeff(double coeff){
+	m_nLinearAttenuationCoeff = coeff;
+}
+
+void TraceUI::setQuadraticAttenuationCoeff(double coeff){
+	m_nQuadraticAttenuationCoeff = coeff;
+}
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -243,9 +255,9 @@ TraceUI::TraceUI() {
 	// init.
 	m_nDepth = 0;
 	m_nSize = 150;
-	m_nConstantAttenuationCoeff = 0.25;
-	m_nLinearAttenuationCoeff = 0.25;
-	m_nQuadraticAttenuationCoeff = 0.50;
+	m_nConstantAttenuationCoeff = 1.0;
+	m_nLinearAttenuationCoeff = 0.0;
+	m_nQuadraticAttenuationCoeff = 0.0;
 	m_mainWindow = new Fl_Window(100, 40, 400, 150, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar

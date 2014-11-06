@@ -49,9 +49,6 @@ public:
 	virtual double distanceAttenuation( const vec3f& P ) const;
 	virtual vec3f getColor( const vec3f& P ) const;
 	virtual vec3f getDirection( const vec3f& P ) const;
-	void setConstantAttenuationCoeff(const double coeff){ constantAttenuationCoeff = coeff * traceUI->getConstantAttenuationCoeff(); }
-	void setLinearAttenuationCoeff(const double coeff){ linearAttenuationCoeff = coeff * traceUI->getLinearAttenuationCoeff(); }
-	void setQuadraticAttenuationCoeff(const double coeff){ quadraticAttenuationCoeff = coeff * traceUI->getQuadraticAttenuationCoeff(); }
 	double getConstantAttenuationCoeff() { return constantAttenuationCoeff; }
 	double getLinearAttenuationCoeff() { return linearAttenuationCoeff; }
 	double getQuadraticAttenuationCoeff() { return quadraticAttenuationCoeff; }
