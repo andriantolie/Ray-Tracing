@@ -26,10 +26,16 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 	//add ambient light
 	Light* ambient_light = scene->getAmbient();
+	// case ambient light is given in .ray file
 	if (ambient_light != NULL){
 		result[0] += (1 - kt[0]) * ka[0] * ambient_light->getColor(isectCoord)[0];
 		result[1] += (1 - kt[1]) * ka[1] * ambient_light->getColor(isectCoord)[1];
 		result[2] += (1 - kt[2]) * ka[2] * ambient_light->getColor(isectCoord)[2];
+	}
+	else{
+		result[0] += (1 - kt[0]) * ka[0] * traceUI->getAmbientLightValue();
+		result[1] += (1 - kt[1]) * ka[1] * traceUI->getAmbientLightValue();
+		result[2] += (1 - kt[2]) * ka[2] * traceUI->getAmbientLightValue();
 	}
 
 	list<Light*>::const_iterator light_start = scene->beginLights();
@@ -49,16 +55,16 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 		// diffuse reflection angle
 		double diffuseReflectionAngle = normal.dot(direction);
-		if (diffuseReflectionAngle < NORMAL_EPSILON) diffuseReflectionAngle = 0.0;
+		if (diffuseReflectionAngle < 0.0) diffuseReflectionAngle = 0.0;
 		//add difuse light
-		result[0] += (1 - kt[0]) * intensity[0] * kd[0] * diffuseReflectionAngle * shadowAttenuation[0] * distanceAttenuation;
-		result[1] += (1 - kt[1]) * intensity[1] * kd[1] * diffuseReflectionAngle * shadowAttenuation[1] * distanceAttenuation;
-		result[2] += (1 - kt[2]) * intensity[2] * kd[2] * diffuseReflectionAngle * shadowAttenuation[2] * distanceAttenuation;
+		result[0] += intensity[0] * kd[0] * diffuseReflectionAngle * shadowAttenuation[0] * distanceAttenuation;
+		result[1] += intensity[1] * kd[1] * diffuseReflectionAngle * shadowAttenuation[1] * distanceAttenuation;
+		result[2] += intensity[2] * kd[2] * diffuseReflectionAngle * shadowAttenuation[2] * distanceAttenuation;
 
 		// specular reflection angle
 		// based on equation 16.17 R.V = (2N(N.L) - L).V
 		double specularReflectionAngle = ((2 * normal * normal.dot(direction)) - direction).dot(((-1)*r.getDirection()).normalize());
-		if (specularReflectionAngle < NORMAL_EPSILON) specularReflectionAngle = 0.0;
+		if (specularReflectionAngle < 0.0) specularReflectionAngle = 0.0;
 		double specularReflectionAnglePowered = pow(specularReflectionAngle, shininess * 128);
 		// add specular reflection
 		result[0] += intensity[0] * ks[0] * specularReflectionAnglePowered * shadowAttenuation[0] * distanceAttenuation;
