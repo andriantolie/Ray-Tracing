@@ -14,24 +14,27 @@ vec3f DirectionalLight::shadowAttenuation( const vec3f& P ) const
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
 	// ---Implemented---
-	vec3f direction = getDirection(P);
+	vec3f direction = getDirection(P).normalize();
 	ray shadowRay = ray(P, direction);
 	isect i;
+	vec3f attenuation = vec3f(1.0, 1.0, 1.0);
 	bool intersectOtherObject = scene->intersect(shadowRay, i);
-	if (intersectOtherObject) {
+	while (intersectOtherObject) {
 		//handles transparency
 		vec3f transparencyIndex = i.getMaterial().kt;
 		if (transparencyIndex == vec3f(0.0, 0.0, 0.0)){
 			return vec3f(0, 0, 0);
 		}
 		else{
-			return transparencyIndex;
+			attenuation[0] *= transparencyIndex[0];
+			attenuation[1] *= transparencyIndex[1];
+			attenuation[2] *= transparencyIndex[2];
 		}
+		shadowRay = ray(shadowRay.at(i.t), direction);
+		intersectOtherObject = scene->intersect(shadowRay, i);
+	}
 	
-	}
-	else{
-		return vec3f(1, 1, 1);
-	}
+		return attenuation;
 }
 
 vec3f DirectionalLight::getColor( const vec3f& P ) const
@@ -76,24 +79,27 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
 	// ---Implemented---
-	vec3f direction = getDirection(P);
+	vec3f direction = getDirection(P).normalize();
 	ray shadowRay = ray(P, direction);
 	isect i;
+	vec3f attenuation = vec3f(1.0, 1.0, 1.0);
 	bool intersectOtherObject = scene->intersect(shadowRay, i);
-	if (intersectOtherObject) {
+	while (intersectOtherObject) {
 		//handles transparency
 		vec3f transparencyIndex = i.getMaterial().kt;
 		if (transparencyIndex == vec3f(0.0, 0.0, 0.0)){
 			return vec3f(0, 0, 0);
 		}
 		else{
-			return transparencyIndex;
+			attenuation[0] *= transparencyIndex[0];
+			attenuation[1] *= transparencyIndex[1];
+			attenuation[2] *= transparencyIndex[2];
 		}
+		shadowRay = ray(shadowRay.at(i.t), direction);
+		intersectOtherObject = scene->intersect(shadowRay, i);
+	}
 
-	}
-	else{
-		return vec3f(1, 1, 1);
-	}
+	return attenuation;
 }
 
 //----- Ambient light------
