@@ -33,7 +33,6 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 	}
 
 	isect i;
-
 	if (scene->intersect(r, i)) {
 		// YOUR CODE HERE
 
@@ -50,11 +49,13 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		vec3f intensity = vec3f(0.0, 0.0, 0.0);
 		vec3f normal = i.N;
 		vec3f rayDirection = r.getDirection();
-
+		// dot product between ray and normal is positive when a ray is entering object
+		bool enteringObject = (normal.dot((-1)*rayDirection)) >= 0.0;
+		// if it is light going out from the object, reverse the normal
+		if (!enteringObject) normal = i.N *= -1;
 
 		// add shadow ray into account
 		intensity += m.shade(scene, r, i);
-
 		// reflection is computed using (2*(N.(-d))*N) - (-d)
 		vec3f reflectedDirection = (2 * normal * normal.dot((-1)*rayDirection)) - (-1)*rayDirection;
 		ray reflectionRay = ray(r.at(i.t), reflectedDirection.normalize());
@@ -63,11 +64,8 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		intensity[0] += m.kr[0] * reflectionIntensity[0];
 		intensity[1] += m.kr[1] * reflectionIntensity[1];
 		intensity[2] += m.kr[2] * reflectionIntensity[2];
-
 		// check if the object is transparent
 		if (m.kt != vec3f(0.0,0.0,0.0)){
-			// dot product between ray and normal is positive when a ray is entering object
-			bool enteringObject = (normal.dot((-1)*rayDirection)) >= 0.0;
 			double n_i; // incoming refraction index
 			double n_t; // outgoing refraction index
 			
@@ -78,7 +76,6 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			else{
 				n_i = m.index;
 				n_t = 1.000293; // air refractive index
-				normal = (-1)* normal; // reverse the normal if it is going out from the object
 			}
 			// check total internal refraction
 			bool tir = false;
@@ -98,7 +95,6 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			    intensity[2] += m.kt[2] * refractionIntensity[2];
 			}
 		}
-
 
 		return intensity;
 	
