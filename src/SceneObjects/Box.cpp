@@ -14,15 +14,15 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 
 	double tMin = -1.0e100;
 	double tMax = 1.0e100;
-
 	for (int currentaxis = 0; currentaxis < 3; currentaxis++) {
 
 		double vd = d[currentaxis];
 		double vp = p[currentaxis];
 
 		if (vd == 0.0) {
-			if (vp < min[currentaxis] || vp > max[currentaxis])
+			if (vp < min[currentaxis] || vp > max[currentaxis]) {
 				return false;
+			}
 		}
 		else {
 			double v1 = min[currentaxis] - p[currentaxis];
@@ -43,11 +43,17 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 				tMax = t2;
 
 			if (tMin > tMax) // box is missed
+			{
 				return false;
+			}
 			if (tMax < 0.0) // box is behind ray
+			{
 				return false;
+			}
 			if (tMin <= RAY_EPSILON)
+			{
 				return false;
+			}
 		}
 	}
 

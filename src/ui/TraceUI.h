@@ -33,7 +33,7 @@ public:
 	Fl_Slider*			m_quadraticAttenuationSlider;
 
 	Fl_Slider*			m_thresholdSlider;
-	Fl_Slider*			m_subpixelSlider;
+	Fl_Slider*			m_aaSlider;
 	Fl_Slider*			m_ambientLightSlider;
 
 
@@ -54,6 +54,7 @@ public:
 	double		getQuadraticAttenuationCoeff();
 	double		getThreshold();
 	double		getAmbientLightValue();
+	int			getAA();
 
 	void		setConstantAttenuationCoeff(double coeff);
 	void		setLinearAttenuationCoeff(double coeff);

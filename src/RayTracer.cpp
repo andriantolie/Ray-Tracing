@@ -209,14 +209,21 @@ void RayTracer::traceLines( int start, int stop )
 
 	if( stop > buffer_height )
 		stop = buffer_height;
+	
+	for (int j = start; j < stop; ++j)
+		for (int i = 0; i < buffer_width; ++i)
+			tracePixel(i, j);
 
-	for( int j = start; j < stop; ++j )
-		for( int i = 0; i < buffer_width; ++i )
-			tracePixel(i,j);
 }
 
 void RayTracer::tracePixel( int i, int j )
 {
+	int subpixel = traceUI->getAA();
+	if (subpixel != 1) {
+		tracePixelAA(i, j, subpixel);
+		return;
+	}
+
 	vec3f col;
 
 	if( !scene )
@@ -232,4 +239,32 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[0] = (int)( 255.0 * col[0]);
 	pixel[1] = (int)( 255.0 * col[1]);
 	pixel[2] = (int)( 255.0 * col[2]);
+}
+
+void RayTracer::tracePixelAA(int i, int j, int n) {
+	vec3f col;
+	double coef = 1.0 / (n*n);
+	unsigned char *pixel = buffer + (i + j * buffer_width) * 3;
+	double pixelAvg[3] = { 0.0, 0.0, 0.0 };
+
+	if (!scene) {
+		return;
+	}
+
+	for (double fragmentx = i; fragmentx < i + 1.0f - RAY_EPSILON; fragmentx += 1.0f / n) {
+		for (double fragmenty = j; fragmenty < j + 1.0f - RAY_EPSILON; fragmenty += 1.0f / n) {
+			double x = double(fragmentx) / double(buffer_width);
+			double y = double(fragmenty) / double(buffer_height);
+			col = trace(scene, x, y);
+
+			pixelAvg[0] += coef * (255.0 * col[0]);
+			pixelAvg[1] += coef * (255.0 * col[1]);
+			pixelAvg[2] += coef * (255.0 * col[2]);
+		}
+	}
+	
+	pixel[0] = (int) pixelAvg[0];
+	pixel[1] = (int) pixelAvg[1];
+	pixel[2] = (int) pixelAvg[2];
+	  
 }

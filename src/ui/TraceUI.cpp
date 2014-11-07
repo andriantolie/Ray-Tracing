@@ -251,6 +251,11 @@ double TraceUI::getAmbientLightValue()
 	return m_nAmbientLight;
 }
 
+int TraceUI::getAA() {
+	return m_subpixel;
+}
+
+
 void TraceUI::setConstantAttenuationCoeff(double coeff){
 	m_nConstantAttenuationCoeff = coeff;
 }
@@ -377,17 +382,17 @@ TraceUI::TraceUI() {
 		m_thresholdSlider->callback(cb_thresholdSlides);
 
 		// install subpixel slider
-		m_subpixelSlider = new Fl_Value_Slider(10, 155, 180, 20, "No. of Subpixel");
-		m_subpixelSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_subpixelSlider->type(FL_HOR_NICE_SLIDER);
-		m_subpixelSlider->labelfont(FL_COURIER);
-		m_subpixelSlider->labelsize(12);
-		m_subpixelSlider->minimum(1);
-		m_subpixelSlider->maximum(5);
-		m_subpixelSlider->step(1);
-		m_subpixelSlider->value(m_subpixel);
-		m_subpixelSlider->align(FL_ALIGN_RIGHT);
-		m_subpixelSlider->callback(cb_subpixelSliders);
+		m_aaSlider = new Fl_Value_Slider(10, 155, 180, 20, "No. of Subpixel");
+		m_aaSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_aaSlider->type(FL_HOR_NICE_SLIDER);
+		m_aaSlider->labelfont(FL_COURIER);
+		m_aaSlider->labelsize(12);
+		m_aaSlider->minimum(1);
+		m_aaSlider->maximum(5);
+		m_aaSlider->step(1);
+		m_aaSlider->value(m_subpixel);
+		m_aaSlider->align(FL_ALIGN_RIGHT);
+		m_aaSlider->callback(cb_subpixelSliders);
 
 		// install ambient light slider
 		m_ambientLightSlider = new Fl_Value_Slider(10, 175, 180, 20, "Ambient Light");
@@ -402,6 +407,17 @@ TraceUI::TraceUI() {
 		m_ambientLightSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightSlider->callback(cb_ambientLightSlides);
 
+		m_ambientLightSlider = new Fl_Value_Slider(10, 175, 180, 20, "Ambient Light");
+		m_ambientLightSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ambientLightSlider->type(FL_HOR_NICE_SLIDER);
+		m_ambientLightSlider->value(m_nAmbientLight);
+		m_ambientLightSlider->labelfont(FL_COURIER);
+		m_ambientLightSlider->labelsize(12);
+		m_ambientLightSlider->minimum(0.00);
+		m_ambientLightSlider->maximum(1.00);
+		m_ambientLightSlider->step(0.01);
+		m_ambientLightSlider->align(FL_ALIGN_RIGHT);
+		m_ambientLightSlider->callback(cb_ambientLightSlides);
 
 		m_renderButton = new Fl_Button(280, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
