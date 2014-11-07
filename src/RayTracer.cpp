@@ -35,7 +35,6 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 	}
 	
 	isect i;
-
 	if (scene->intersect(r, i)) {
 		// YOUR CODE HERE
 
@@ -58,11 +57,13 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		vec3f intensity = vec3f(0.0, 0.0, 0.0);
 		vec3f normal = i.N;
 		vec3f rayDirection = r.getDirection();
-
+		// dot product between ray and normal is positive when a ray is entering object
+		bool enteringObject = (normal.dot((-1)*rayDirection)) >= 0.0;
+		// if it is light going out from the object, reverse the normal
+		if (!enteringObject) normal = i.N *= -1;
 
 		// add shadow ray into account
 		intensity += m.shade(scene, r, i);
-
 		// reflection is computed using (2*(N.(-d))*N) - (-d)
 		vec3f reflectedDirection = (2 * normal * normal.dot((-1)*rayDirection)) - (-1)*rayDirection;
 		ray reflectionRay = ray(r.at(i.t), reflectedDirection.normalize());
@@ -110,7 +111,6 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				}
 			}
 		}
-
 
 		return intensity;
 	

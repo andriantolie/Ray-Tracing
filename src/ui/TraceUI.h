@@ -31,8 +31,11 @@ public:
 	Fl_Slider*			m_constantAttenuationSlider;
 	Fl_Slider*			m_linearAttenuationSlider;
 	Fl_Slider*			m_quadraticAttenuationSlider;
+
 	Fl_Slider*			m_thresholdSlider;
 	Fl_Slider*			m_subpixelSlider;
+	Fl_Slider*			m_ambientLightSlider;
+
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -50,10 +53,12 @@ public:
 	double		getLinearAttenuationCoeff();
 	double		getQuadraticAttenuationCoeff();
 	double		getThreshold();
-	
+	double		getAmbientLightValue();
+
 	void		setConstantAttenuationCoeff(double coeff);
 	void		setLinearAttenuationCoeff(double coeff);
 	void		setQuadraticAttenuationCoeff(double coeff);
+	void		setAmbientLightValue(double intensity);
 
 private:
 	RayTracer*	raytracer;
@@ -63,8 +68,12 @@ private:
 	double		m_nConstantAttenuationCoeff;
 	double		m_nLinearAttenuationCoeff;
 	double		m_nQuadraticAttenuationCoeff;
+
 	double		m_threshold;
 	int			m_subpixel;
+
+	double		m_nAmbientLight;
+
 
 // static class members
 	static Fl_Menu_Item menuitems[];
@@ -85,6 +94,7 @@ private:
 	static void cb_quadraticAttenuationSlides(Fl_Widget* o, void* v);
 	static void cb_thresholdSlides(Fl_Widget* o, void* v);
 	static void cb_subpixelSliders(Fl_Widget* o, void* v);
+	static void cb_ambientLightSlides(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

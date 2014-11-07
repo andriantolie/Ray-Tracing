@@ -99,7 +99,9 @@ void TraceUI::cb_constantAttenuationSlides(Fl_Widget* o, void* v)
 
 void TraceUI::cb_linearAttenuationSlides(Fl_Widget* o, void* v)
 {
+
 	((TraceUI*)(o->user_data()))->m_nLinearAttenuationCoeff = double (((Fl_Slider *)o)->value());
+
 }
 
 void TraceUI::cb_quadraticAttenuationSlides(Fl_Widget* o, void* v)
@@ -113,6 +115,12 @@ void TraceUI::cb_thresholdSlides(Fl_Widget* o, void* v) {
 
 void TraceUI::cb_subpixelSliders(Fl_Widget* o, void* v) {
 	((TraceUI*)(o->user_data()))->m_subpixel = int(((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_ambientLightSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nAmbientLight = double(((Fl_Slider *)o)->value());
+
 }
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
@@ -233,8 +241,14 @@ double TraceUI::getQuadraticAttenuationCoeff()
 	return m_nQuadraticAttenuationCoeff;
 }
 
+
 double TraceUI::getThreshold() {
 	return m_threshold;
+}
+
+double TraceUI::getAmbientLightValue()
+{
+	return m_nAmbientLight;
 }
 
 void TraceUI::setConstantAttenuationCoeff(double coeff){
@@ -247,6 +261,10 @@ void TraceUI::setLinearAttenuationCoeff(double coeff){
 
 void TraceUI::setQuadraticAttenuationCoeff(double coeff){
 	m_nQuadraticAttenuationCoeff = coeff;
+}
+
+void TraceUI::setAmbientLightValue(double intensity){
+	m_nAmbientLight = intensity;
 }
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
@@ -270,9 +288,14 @@ TraceUI::TraceUI() {
 	m_nConstantAttenuationCoeff = 1.0;
 	m_nLinearAttenuationCoeff = 0.0;
 	m_nQuadraticAttenuationCoeff = 0.0;
+
 	m_threshold = 0.0;
 	m_subpixel = 1;
+	m_nAmbientLight = 0.0;
 	m_mainWindow = new Fl_Window(100, 40, 400, 250, "Ray <Not Loaded>");
+
+	
+
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 400, 25);
@@ -310,10 +333,9 @@ TraceUI::TraceUI() {
 		m_constantAttenuationSlider->type(FL_HOR_NICE_SLIDER);
 		m_constantAttenuationSlider->labelfont(FL_COURIER);
 		m_constantAttenuationSlider->labelsize(12);
-		m_constantAttenuationSlider->minimum(0);
-		m_constantAttenuationSlider->maximum(1);
+		m_constantAttenuationSlider->minimum(0.00);
+		m_constantAttenuationSlider->maximum(1.00);
 		m_constantAttenuationSlider->step(0.01);
-		m_constantAttenuationSlider->value(m_nConstantAttenuationCoeff);
 		m_constantAttenuationSlider->align(FL_ALIGN_RIGHT);
 		m_constantAttenuationSlider->callback(cb_constantAttenuationSlides);
 
@@ -323,10 +345,9 @@ TraceUI::TraceUI() {
 		m_linearAttenuationSlider->type(FL_HOR_NICE_SLIDER);
 		m_linearAttenuationSlider->labelfont(FL_COURIER);
 		m_linearAttenuationSlider->labelsize(12);
-		m_linearAttenuationSlider->minimum(0);
-		m_linearAttenuationSlider->maximum(1);
+		m_linearAttenuationSlider->minimum(0.00);
+		m_linearAttenuationSlider->maximum(1.00);
 		m_linearAttenuationSlider->step(0.01);
-		m_linearAttenuationSlider->value(m_nLinearAttenuationCoeff);
 		m_linearAttenuationSlider->align(FL_ALIGN_RIGHT);
 		m_linearAttenuationSlider->callback(cb_linearAttenuationSlides);
 
@@ -336,10 +357,9 @@ TraceUI::TraceUI() {
 		m_quadraticAttenuationSlider->type(FL_HOR_NICE_SLIDER);
 		m_quadraticAttenuationSlider->labelfont(FL_COURIER);
 		m_quadraticAttenuationSlider->labelsize(12);
-		m_quadraticAttenuationSlider->minimum(0);
-		m_quadraticAttenuationSlider->maximum(1);
+		m_quadraticAttenuationSlider->minimum(0.00);
+		m_quadraticAttenuationSlider->maximum(1.00);
 		m_quadraticAttenuationSlider->step(0.01);
-		m_quadraticAttenuationSlider->value(m_nQuadraticAttenuationCoeff);
 		m_quadraticAttenuationSlider->align(FL_ALIGN_RIGHT);
 		m_quadraticAttenuationSlider->callback(cb_quadraticAttenuationSlides);
 
@@ -368,6 +388,20 @@ TraceUI::TraceUI() {
 		m_subpixelSlider->value(m_subpixel);
 		m_subpixelSlider->align(FL_ALIGN_RIGHT);
 		m_subpixelSlider->callback(cb_subpixelSliders);
+
+		// install ambient light slider
+		m_ambientLightSlider = new Fl_Value_Slider(10, 175, 180, 20, "Ambient Light");
+		m_ambientLightSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ambientLightSlider->type(FL_HOR_NICE_SLIDER);
+		m_ambientLightSlider->value(m_nAmbientLight);
+		m_ambientLightSlider->labelfont(FL_COURIER);
+		m_ambientLightSlider->labelsize(12);
+		m_ambientLightSlider->minimum(0.00);
+		m_ambientLightSlider->maximum(1.00);
+		m_ambientLightSlider->step(0.01);
+		m_ambientLightSlider->align(FL_ALIGN_RIGHT);
+		m_ambientLightSlider->callback(cb_ambientLightSlides);
+
 
 		m_renderButton = new Fl_Button(280, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
