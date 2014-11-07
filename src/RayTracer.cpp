@@ -50,7 +50,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		vec3f normal = i.N;
 		vec3f rayDirection = r.getDirection();
 		// dot product between ray and normal is positive when a ray is entering object
-		bool enteringObject = (normal.dot((-1)*rayDirection)) >= 0.0;
+		bool enteringObject = (normal.dot((-1)*rayDirection)) > RAY_EPSILON;
 		// if it is light going out from the object, reverse the normal
 		if (!enteringObject) normal = i.N *= -1;
 
