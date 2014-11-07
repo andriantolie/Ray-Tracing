@@ -31,6 +31,8 @@ public:
 	Fl_Slider*			m_constantAttenuationSlider;
 	Fl_Slider*			m_linearAttenuationSlider;
 	Fl_Slider*			m_quadraticAttenuationSlider;
+	Fl_Slider*			m_thresholdSlider;
+	Fl_Slider*			m_subpixelSlider;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -47,6 +49,7 @@ public:
 	double		getConstantAttenuationCoeff();
 	double		getLinearAttenuationCoeff();
 	double		getQuadraticAttenuationCoeff();
+	double		getThreshold();
 	
 	void		setConstantAttenuationCoeff(double coeff);
 	void		setLinearAttenuationCoeff(double coeff);
@@ -60,6 +63,8 @@ private:
 	double		m_nConstantAttenuationCoeff;
 	double		m_nLinearAttenuationCoeff;
 	double		m_nQuadraticAttenuationCoeff;
+	double		m_threshold;
+	int			m_subpixel;
 
 // static class members
 	static Fl_Menu_Item menuitems[];
@@ -78,7 +83,8 @@ private:
 	static void cb_constantAttenuationSlides(Fl_Widget* o, void* v);
 	static void cb_linearAttenuationSlides(Fl_Widget* o, void* v);
 	static void cb_quadraticAttenuationSlides(Fl_Widget* o, void* v);
-
+	static void cb_thresholdSlides(Fl_Widget* o, void* v);
+	static void cb_subpixelSliders(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

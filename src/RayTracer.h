@@ -9,7 +9,7 @@
 class RayTracer
 {
 public:
-    RayTracer();
+	RayTracer();
     ~RayTracer();
 
     vec3f trace( Scene *scene, double x, double y );
@@ -32,6 +32,8 @@ private:
 	int bufferSize;
 	Scene *scene;
 
+	double productKr;
+	double productKt;
 	bool m_bSceneLoaded;
 };
 

@@ -94,17 +94,25 @@ void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 
 void TraceUI::cb_constantAttenuationSlides(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_nConstantAttenuationCoeff = int(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nConstantAttenuationCoeff = double(((Fl_Slider *)o)->value());
 }
 
 void TraceUI::cb_linearAttenuationSlides(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_nLinearAttenuationCoeff = int(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nLinearAttenuationCoeff = double (((Fl_Slider *)o)->value());
 }
 
 void TraceUI::cb_quadraticAttenuationSlides(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_nQuadraticAttenuationCoeff = int(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nQuadraticAttenuationCoeff = double (((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_thresholdSlides(Fl_Widget* o, void* v) {
+	((TraceUI*)(o->user_data()))->m_threshold = double (((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_subpixelSliders(Fl_Widget* o, void* v) {
+	((TraceUI*)(o->user_data()))->m_subpixel = int(((Fl_Slider *)o)->value());
 }
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
@@ -225,6 +233,10 @@ double TraceUI::getQuadraticAttenuationCoeff()
 	return m_nQuadraticAttenuationCoeff;
 }
 
+double TraceUI::getThreshold() {
+	return m_threshold;
+}
+
 void TraceUI::setConstantAttenuationCoeff(double coeff){
 	m_nConstantAttenuationCoeff = coeff;
 }
@@ -258,7 +270,9 @@ TraceUI::TraceUI() {
 	m_nConstantAttenuationCoeff = 1.0;
 	m_nLinearAttenuationCoeff = 0.0;
 	m_nQuadraticAttenuationCoeff = 0.0;
-	m_mainWindow = new Fl_Window(100, 40, 400, 150, "Ray <Not Loaded>");
+	m_threshold = 0.0;
+	m_subpixel = 1;
+	m_mainWindow = new Fl_Window(100, 40, 400, 250, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 400, 25);
@@ -294,7 +308,6 @@ TraceUI::TraceUI() {
 		m_constantAttenuationSlider = new Fl_Value_Slider(10, 75, 180, 20, "Attenuation, Constant");
 		m_constantAttenuationSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_constantAttenuationSlider->type(FL_HOR_NICE_SLIDER);
-		m_constantAttenuationSlider->value(m_nConstantAttenuationCoeff);
 		m_constantAttenuationSlider->labelfont(FL_COURIER);
 		m_constantAttenuationSlider->labelsize(12);
 		m_constantAttenuationSlider->minimum(0);
@@ -308,7 +321,6 @@ TraceUI::TraceUI() {
 		m_linearAttenuationSlider = new Fl_Value_Slider(10, 95, 180, 20, "Attenuation, Linear");
 		m_linearAttenuationSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_linearAttenuationSlider->type(FL_HOR_NICE_SLIDER);
-		m_linearAttenuationSlider->value(m_nLinearAttenuationCoeff);
 		m_linearAttenuationSlider->labelfont(FL_COURIER);
 		m_linearAttenuationSlider->labelsize(12);
 		m_linearAttenuationSlider->minimum(0);
@@ -322,7 +334,6 @@ TraceUI::TraceUI() {
 		m_quadraticAttenuationSlider = new Fl_Value_Slider(10, 115, 180, 20, "Attenuation, Quadratic");
 		m_quadraticAttenuationSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_quadraticAttenuationSlider->type(FL_HOR_NICE_SLIDER);
-		m_quadraticAttenuationSlider->value(m_nQuadraticAttenuationCoeff);
 		m_quadraticAttenuationSlider->labelfont(FL_COURIER);
 		m_quadraticAttenuationSlider->labelsize(12);
 		m_quadraticAttenuationSlider->minimum(0);
@@ -331,6 +342,32 @@ TraceUI::TraceUI() {
 		m_quadraticAttenuationSlider->value(m_nQuadraticAttenuationCoeff);
 		m_quadraticAttenuationSlider->align(FL_ALIGN_RIGHT);
 		m_quadraticAttenuationSlider->callback(cb_quadraticAttenuationSlides);
+
+		// install threshold slider
+		m_thresholdSlider = new Fl_Value_Slider(10, 135, 180, 20, "Threshold");
+		m_thresholdSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_thresholdSlider->type(FL_HOR_NICE_SLIDER);
+		m_thresholdSlider->labelfont(FL_COURIER);
+		m_thresholdSlider->labelsize(12);
+		m_thresholdSlider->minimum(0.00);
+		m_thresholdSlider->maximum(1.00);
+		m_thresholdSlider->step(0.01);
+		m_thresholdSlider->value(m_threshold);
+		m_thresholdSlider->align(FL_ALIGN_RIGHT);
+		m_thresholdSlider->callback(cb_thresholdSlides);
+
+		// install subpixel slider
+		m_subpixelSlider = new Fl_Value_Slider(10, 155, 180, 20, "No. of Subpixel");
+		m_subpixelSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_subpixelSlider->type(FL_HOR_NICE_SLIDER);
+		m_subpixelSlider->labelfont(FL_COURIER);
+		m_subpixelSlider->labelsize(12);
+		m_subpixelSlider->minimum(1);
+		m_subpixelSlider->maximum(5);
+		m_subpixelSlider->step(1);
+		m_subpixelSlider->value(m_subpixel);
+		m_subpixelSlider->align(FL_ALIGN_RIGHT);
+		m_subpixelSlider->callback(cb_subpixelSliders);
 
 		m_renderButton = new Fl_Button(280, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
