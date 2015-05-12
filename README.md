@@ -1,4 +1,4 @@
-COMP4411-Trace
+Ray Tracing
 ==============
 
-COMP4411 Assignment 3 Ray Tracing
+Computer Graphics Assignment - Ray Tracing
